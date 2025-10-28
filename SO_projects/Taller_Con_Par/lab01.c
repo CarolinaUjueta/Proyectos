@@ -1,97 +1,80 @@
-/*
- ============================================================================
- Nombre:       Carolina Ujueta
- Profesor:     John Corredor
- Universidad:  Pontificia Universidad Javeriana
- Asignatura:   Sistemas Operativos
- ============================================================================
- Objetivo del challenge:
-    Implementar un programa en C que cree múltiples hilos (threads) utilizando 
-    la librería pthread. Cada hilo imprime su número de creación y su ID, y 
-    posteriormente incrementa un contador global compartido de manera segura 
-    mediante el uso de un mutex.
+/*********************************************************************************************
+ * Pontificia Universidad Javeriana
+ *
+ * Autor:       Carolina Ujueta Ricardo
+ * Materia:     Sistemas Operativos
+ * Docente:     J. Corredor, PhD
+ * Fecha:       27/10/2025
+ * Tema:        Introducción a hilos POSIX (pthread)
+ *
+ * Descripción general:
+ *     Programa en C que demuestra la creación y ejecución concurrente de hilos
+ *     utilizando la biblioteca pthread. Cada hilo imprime un mensaje independiente,
+ *     mostrando la ejecución simultánea de tareas. El ejercicio permite familiarizarse
+ *     con la sintaxis básica de pthread, la creación de hilos con pthread_create,
+ *     y la sincronización mediante pthread_join.
+ *********************************************************************************************/
 
-    Este ejercicio tiene como propósito comprender los conceptos de 
-    sincronización de hilos, acceso concurrente a memoria compartida y el uso 
-    de mecanismos de exclusión mutua (mutex) para evitar condiciones de carrera.
- ============================================================================
-*/
-
-#include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-
-/*
- * Constante que define el número total de hilos que se crearán.
- * En este caso, se crearán 10 hilos que se ejecutarán de manera concurrente.
- */
-#define NTHREADS 10
-
-/*
- * Declaración e inicialización de un mutex global.
- * El mutex se utiliza para proteger la variable 'counter' 
- * cuando es modificada por múltiples hilos simultáneamente.
- */
-pthread_mutex_t mutex1 = PTHREAD_MUTEX_INITIALIZER;
-
-/*
- * Variable global compartida por todos los hilos.
- * Se incrementará dentro de cada hilo, protegida por el mutex.
- */
-int counter = 0;
+#include <stdio.h>
 
 /*
  ============================================================================
- Función: thread_function
+ Función: print_message_function
  Descripción:
-    Esta función es ejecutada por cada hilo creado. 
-    Recibe un puntero genérico 'arg' que apunta a un entero con el número 
-    correspondiente al hilo. 
-    Cada hilo imprime su número e ID, y luego incrementa el contador global.
+    Función que ejecutará cada hilo creado.
+    Recibe un puntero genérico (void*) que se interpreta como puntero a cadena de caracteres.
+    Imprime el mensaje pasado como argumento, simulando tareas independientes ejecutadas
+    de forma concurrente.
  ============================================================================
 */
-void *thread_function(void *arg) {
-    int i = *(int *)(arg); // Se obtiene el número del hilo desde el argumento recibido
-
-    // Se imprime el número del hilo y su ID interno asignado por pthread
-    printf("Thread number: %d | Thread ID %ld\n", i, pthread_self());
-
-    /*
-     * Sección crítica protegida por el mutex.
-     * Solo un hilo a la vez puede ejecutar las líneas entre lock y unlock,
-     * evitando así condiciones de carrera sobre 'counter'.
-     */
-    pthread_mutex_lock(&mutex1);   // Bloquea el acceso al recurso compartido
-    counter++;                     // Incrementa el contador global
-    pthread_mutex_unlock(&mutex1); // Libera el acceso al recurso
+void *print_message_function(void *ptr) {
+    char *message;
+    message = (char *)ptr; // Conversión del puntero genérico a cadena
+    printf("%s\n", message);
+    return NULL; // Devuelve NULL explícitamente por buenas prácticas
 }
 
 /*
  ============================================================================
- Función: main
+ Función principal: main
  Descripción:
-    Es el punto de entrada del programa. Crea múltiples hilos (NTHREADS),
-    cada uno ejecutando 'thread_function'. 
-    Al finalizar, imprime el valor acumulado del contador global.
+    Punto de entrada del programa.
+    Crea dos hilos que ejecutan la misma función con distintos mensajes.
+    Se valida el resultado de creación de cada hilo y se sincroniza su finalización
+    mediante pthread_join, asegurando que ambos terminen antes de finalizar el programa.
  ============================================================================
 */
-void main() {
-    pthread_t thread_id[NTHREADS]; // Arreglo que almacena los identificadores de los hilos
-    int i, j;
+int main(void) {
+    pthread_t thread1, thread2;  // Identificadores de los hilos
+    char *message1 = "Thread 1"; // Mensaje del primer hilo
+    char *message2 = "Thread 2"; // Mensaje del segundo hilo
+    int iret1, iret2;            // Códigos de retorno de creación
 
     /*
-     * Bucle que crea NTHREADS hilos.
-     * Cada hilo ejecuta la función 'thread_function' y recibe como argumento
-     * la dirección de la variable 'i'.
+     * Creación de los hilos independientes.
+     * Cada uno ejecutará la misma función pero con mensajes distintos.
      */
-    for (i = 0; i < NTHREADS; i++) {
-        pthread_create(&thread_id[i], NULL, thread_function, &i);
-    }
+    iret1 = pthread_create(&thread1, NULL, print_message_function, (void*) message1);
+    iret2 = pthread_create(&thread2, NULL, print_message_function, (void*) message2);
 
     /*
-     * Finalmente, se imprime el valor del contador global.
-     * En teoría, si todos los hilos incrementan correctamente el contador,
-     * el resultado esperado sería igual al número total de hilos (NTHREADS).
+     * Comprobación de resultados:
+     * pthread_create devuelve 0 si el hilo se creó correctamente.
      */
-    printf("Final counter value: %d\n", counter);
+    printf("Thread 1 returns: %d\n", iret1);
+    printf("Thread 2 returns: %d\n", iret2);
+
+    /*
+     * Sincronización de los hilos.
+     * pthread_join garantiza que ambos hilos terminen su ejecución
+     * antes de que el programa principal finalice.
+     */
+    pthread_join(thread1, NULL);
+    pthread_join(thread2, NULL);
+
+    printf("Finalización correcta del programa.\n");
+
+    return 0; // Finalización exitosa del programa principal
 }
