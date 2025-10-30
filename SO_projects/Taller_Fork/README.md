@@ -1,4 +1,4 @@
-# Programa Modular en C
+# Programa procesos en c
 
 Este proyecto implementa un programa en C de manera modular. Se organiza en archivos separados para mantener claridad entre la definición de funciones, su implementación y el programa principal.
 
