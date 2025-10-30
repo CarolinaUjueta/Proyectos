@@ -9,7 +9,7 @@
  *               Padre recibe por pipe el resultado.                                                 *
  *                                                                                                   *
  *****************************************************************************************************
- * En este archivo se encuentran definidas las funciones implementadas en la lógica del codigo       *
+ * En este archivo se encuentran definidas las funciones que se implementarán en el codigo           *
  *                                                                                                   *
  *****************************************************************************************************/
 
