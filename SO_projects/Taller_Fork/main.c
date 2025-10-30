@@ -15,6 +15,7 @@
  * Ejecutar :  ./taller_procesos N1 fichero00 N2 fichero01                                           *
  *                                                                                                   *
  *****************************************************************************************************/
+#include "funciones.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
