@@ -1,5 +1,5 @@
 /************************************************************************************************************/
-/*  Programa:     Taller 1 - Introducción a OpenMP                                                          */
+/*  Programa:     lab 02 - Introducción a OpenMP                                                            */
 /*  Autor:        Carolina Ujueta Ricardo                                                                   */
 /*  Fecha:        4 de noviembre de 2025                                                                    */
 /*                                                                                                          */
@@ -7,6 +7,7 @@
 /*                Introducir el uso de la librería OpenMP en C, mostrando cómo                              */
 /*                crear regiones paralelas, controlar el número de hilos y                                  */
 /*                observar el comportamiento concurrente de los threads.                                    */
+/*                                                                                                          */
 /*  Este programa ejemplifica el uso básico de la librería OpenMP, incluyendo:                              */
 /*   - Lectura de un argumento desde la línea de comandos (número de hilos).                                */
 /*   - Configuración dinámica del número de hilos mediante omp_set_num_threads().                           */
