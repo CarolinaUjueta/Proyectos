@@ -1,14 +1,16 @@
-/* =========================================================================
-   Programa: Ejecución paralela con OpenMP
-   Autor: Carolina Ujueta Ricardo
-   Descripción:
-       Demostración básica del uso de la biblioteca OpenMP en C.
-       Este programa ejecuta un bloque de código en paralelo, 
-       donde cada hilo imprime su identificador (ID de thread).
-
-       El objetivo es la creación de hilos paralelos
-       y obtener el número de hilos activos.
-   ======================================================================== */
+/************************************************************************************************************/
+/*  Programa:     lab 01 - Ejecucion paralela                                                               */
+/*  Autor:        Carolina Ujueta Ricardo                                                                   */
+/*  Fecha:        4 de noviembre de 2025                                                                    */
+/*                                                                                                          */
+/*   Descripción:                                                                                           */
+/*       Demostración básica del uso de la biblioteca OpenMP en C.                                          */
+/*       Este programa ejecuta un bloque de código en paralelo,                                             */
+/*       donde cada hilo imprime su identificador (ID de thread).                                           */
+/*                                                                                                          */
+/*       El objetivo es la creación de hilos paralelos                                                      */
+/*       y obtener el número de hilos activos.                                                              */
+/************************************************************************************************************/
 
 #include <omp.h>     /* Librería principal de OpenMP */
 #include <stdio.h>
