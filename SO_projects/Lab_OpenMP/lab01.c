@@ -31,12 +31,12 @@
 /************************************************************************************************************/
 int main(int argc, char *argv[]) {
 
-    /* ---- Información general del entorno OpenMP ---- */
+    /* Información general del entorno OpenMP */
     printf("OpenMP ejecutando con %d hilos\n", omp_get_max_threads());
     /*  omp_get_max_threads(): devuelve el número máximo de hilos
         disponibles para la ejecución paralela. */
 
-    /* ---- Región paralela ---- */
+    /* Región paralela */
     #pragma omp parallel
     {
         /* Cada hilo imprime su identificador único. */
@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
             dentro del equipo de hilos (desde 0 hasta N-1). */
     }
 
-    /* ---- Fin de la ejecución ---- */
+    /* Fin de la ejecución */
     return 0;
 }
 /************************************************************************************************************/
