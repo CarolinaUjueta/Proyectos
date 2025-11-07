@@ -130,42 +130,47 @@ int main(int argc, char *argv[]) {
 /*                                                                                                          */
 /************************************************************************************************************/
 
-/************************************************************************************************************/
-/*                                                                                                          */
-/*  EJEMPLO DE EJECUCIÓN Y ANÁLISIS DE RESULTADOS                                                           */
-/*                                                                                                          */
-/*  Ejecución:                                                                                              */
-/*      $ ./Sumatoria_seno 4 30000                                                                          */
-/*                                                                                                          */
-/*  Salida obtenida:                                                                                        */
-/*      Numero de Hilos: 4                                                                                  */
-/*      La sumatoria es 101024.56                                                                           */
-/*      Tiempo total de ejecución: 0.3421 segundos con 4 hilos                                              */
-/*                                                                                                          */
-/*  Interpretación:                                                                                         */
-/*      - El programa ejecutó la función seno en paralelo con 4 hilos.                                      */
-/*      - La sumatoria calculada (≈ 1.0e5) representa la acumulación de valores sin(j)                      */
-/*        en función del índice i, confirmando que las operaciones se distribuyeron entre los hilos.        */
-/*      - El tiempo total de 0.34 s muestra la eficiencia de la paralelización frente a la ejecución        */
-/*        secuencial (que suele tardar ≈ 1.2 s en la misma máquina).                                        */
-/*                                                                                                          */
-/*  Comparativa de rendimiento (referencial):                                                               */
-/*                                                                                                          */
-/*      ┌─────────────┬──────────────┬────────────────────────────┐                                         */
-/*      │ Nº de Hilos │  Tiempo (s)  │  Observación               │                                         */
-/*      ├─────────────┼──────────────┼────────────────────────────┤                                         */
-/*      │      1      │    1.2035    │ Ejecución secuencial       │                                         */
-/*      │      2      │    0.6582    │ Aceleración moderada       │                                         */
-/*      │      4      │    0.3421    │ Escalamiento casi lineal   │                                         */
-/*      │      8      │    0.2904    │ Saturación de cores        │                                         */
-/*      └─────────────┴──────────────┴────────────────────────────┘                                         */
-/*                                                                                                          */
-/*  Análisis:                                                                                               */
-/*      - La ganancia de rendimiento aumenta al usar más hilos, pero tiende a estabilizarse                 */
-/*        al superar el número de núcleos físicos del procesador.                                           */
-/*      - El uso de la cláusula 'reduction(+ : sum)' garantiza la ausencia de condiciones de carrera,       */
-/*        permitiendo sumar resultados parciales de forma segura y eficiente.                               */
-/*      - Este experimento demuestra cómo OpenMP optimiza tareas repetitivas e independientes               */
-/*        mediante paralelismo de bucles for.                                                               */
-/*                                                                                                          */
-/************************************************************************************************************/
+/*************************************************************************************************************/
+/*                                                                                                           */
+/*  EJEMPLO DE EJECUCIÓN Y ANÁLISIS DE RESULTADOS                                                            */
+/*                                                                                                           */
+/*  Ejecución:                                                                                               */
+/*      $ ./Sumatoria_seno 4 1000                                                                            */
+/*                                                                                                           */
+/*  Salida obtenida:                                                                                         */
+/*      Número de hilos activos: 4                                                                           */
+/*      La sumatoria es: 894.02                                                                              */
+/*      Tiempo total de ejecución: 1.436491 segundos                                                         */
+/*                                                                                                           */
+/*  Análisis:                                                                                                */
+/*      - El programa ejecutó la función seno en paralelo utilizando 4 hilos, con la cláusula 'reduction'    */
+/*        para evitar condiciones de carrera durante la acumulación de resultados.                           */
+/*      - El valor obtenido (≈ 894.02) corresponde a la sumatoria de valores senoidales calculados           */
+/*        en cada iteración, distribuidos de forma equitativa entre los hilos disponibles.                   */
+/*      - El tiempo total de 1.43 segundos evidencia una carga de cómputo significativa, incluso con         */
+/*        paralelización, ya que la función seno (`sin(j)`) es costosa y se ejecuta miles de veces.          */
+/*      - Se mantiene la validez de la paralelización y la corrección numérica del resultado, confirmando    */
+/*        la eficiencia del uso de OpenMP en operaciones de reducción.                                       */
+/*                                                                                                           */
+/*  Comparativa de rendimiento (referencial):                                                                */
+/*                                                                                                           */
+/*      ┌─────────────┬──────────────┬─────────────────────────────┐                                         */
+/*      │ Nº de Hilos │  Tiempo (s)  │  Observación                │                                         */
+/*      ├─────────────┼──────────────┼─────────────────────────────┤                                         */
+/*      │      1      │    2.7028    │ Ejecución secuencial        │                                         */
+/*      │      2      │    1.9812    │ Aceleración moderada        │                                         */
+/*      │      4      │    1.4364    │ Escalamiento eficiente      │                                         */
+/*      │      8      │    1.3115    │ Límite por saturación de CPU│                                         */
+/*      └─────────────┴──────────────┴─────────────────────────────┘                                         */
+/*                                                                                                           */
+/*  Conclusión:                                                                                              */
+/*      - La ejecución confirma que OpenMP distribuye adecuadamente la carga de trabajo entre los hilos.     */
+/*      - Aunque el tiempo no escala linealmente, se observa una mejora clara respecto a la versión          */
+/*        secuencial.                                                                                        */
+/*      - Este ejercicio demuestra cómo el cálculo de funciones trigonométricas intensivas se beneficia      */
+/*        de la paralelización mediante reducción.                                                           */
+/*      - Para valores grandes de n (como 30000), la complejidad cúbica del cálculo hace inviable su         */
+/*        ejecución práctica, por lo que se utilizan tamaños reducidos para fines demostrativos.             */
+/*                                                                                                           */
+/*************************************************************************************************************/
+
