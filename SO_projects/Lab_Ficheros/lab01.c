@@ -9,7 +9,7 @@
 /*                                                                                                          */
 /*  Características principales:                                                                            */
 /*   - Uso de libreria stat para la comprobación de diferentes estados de un directorio.                    */
-/*+++********************************************************************************************************/
+/************************************************************************************************************/
 
 #include <sys/types.h> //Define un conjunto de tipos de datos
 #include <sys/stat.h> //Libreria para uso de stat (estado)
