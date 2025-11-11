@@ -31,67 +31,70 @@
 /*      - Si hay directorio, imprime el tamaño de los ficheros.                                             */
 /************************************************************************************************************/
 
-int main () {
-        int er;
-        char nomdir[100], nomfich[100], resp[30];
-        struct stat atr;
-        DIR *d;
-        struct dirent *rd1;
-        time_t fecha;
+int main() {
+    int er;
+    char nomdir[100], nomfich[200], resp[30];
+    struct stat atr;
+    DIR *d;
+    struct dirent *rd1;
+    time_t fecha;
 
-        printf ("Nombre directorio: ");
-        fgets (nomdir,sizeof(nomdir),stdin); //Guarda el nombre>
-        nomdir[strlen(nomdir)-1]='\0'; //Eliminamos el \n del N>
-        fecha = time(&fecha);
-        if ((d=opendir(nomdir))==NULL){ //If que lanza error si>
-                printf ("El directorio no existe\n");
-                return -1;
-        }
-        else {
-                while (( rd1 =readdir(d)) != NULL) {
-                        if ( (strcmp(rd1->d_name, ".")!=0 )&& (strcmp(rd1->d_name, "..")!=0 )){
-                        strcpy (nomfich, nomdir);
-                        strcat (nomfich, "/");
-                        strcat (nomfich, rd1->d_name);
-                        printf ("fichero :%s:", nomfich);
-                        er=stat (nomfich, &atr);
-                        printf ("modo :%#o:", atr.st_mode);
+    printf("Nombre directorio: ");
+    fgets(nomdir, sizeof(nomdir), stdin); // Guarda el nombre
+    nomdir[strlen(nomdir) - 1] = '\0';    // Elimina el \n del nombre
+    fecha = time(&fecha);
+
+    if ((d = opendir(nomdir)) == NULL) { // Si no se puede abrir el directorio
+        printf("El directorio no existe\n");
+        return -1;
+    } else {
+        while ((rd1 = readdir(d)) != NULL) {
+            if ((strcmp(rd1->d_name, ".") != 0) && (strcmp(rd1->d_name, "..") != 0)) {
+                strcpy(nomfich, nomdir);
+                strcat(nomfich, "/");
+                strcat(nomfich, rd1->d_name);
+                printf("fichero :%s:", nomfich);
+
+                er = stat(nomfich, &atr);
+                printf("modo :%#o:", atr.st_mode);
+
+                if ((atr.st_mode & 0400) != 0)
+                    printf(" permiso R para propietario\n");
+                else
+                    printf(" No permiso R para propietario\n");
+            } else {
+                while ((rd1 = readdir(d)) != NULL) {
+                    if ((strcmp(rd1->d_name, ".") != 0) && (strcmp(rd1->d_name, "..") != 0)) {
+                        strcpy(nomfich, nomdir);
+                        strcat(nomfich, "/");
+                        strcat(nomfich, rd1->d_name);
+                        printf("fichero :%s:\n", nomfich);
+
+                        er = stat(nomfich, &atr);
+                        printf("modo :%#o:\n", atr.st_mode);
 
                         if ((atr.st_mode & 0400) != 0)
-                                printf (" permiso R para propietario\n");
-                        else                                
-                          printf (" No permiso R para propietario\n");
-                        } else {
-                                while ((rd1 = readdir(d)) != NULL) {
-                                if ((strcmp(rd1->d_name, ".") != 0) && (strcmp(rd1->d_name, "..") != 0)) {
-                                strcpy(nomfich, nomdir);
-                                strcat(nomfich, "/");
-                                strcat(nomfich, rd1->d_name);
-                                printf("fichero :%s:\n", nomfich);
+                            printf("permiso R para propietario\n");
+                        else
+                            printf("No permiso R para propietario\n");
 
-                                er = stat(nomfich, &atr);
-                                printf("modo :%#o:\n", atr.st_mode);
-
-                                if ((atr.st_mode & 0400) != 0)
-                                        printf("permiso R para propietario\n");
-                                else
-                                        printf("No permiso R para propietario\n");
-
-                                if (S_ISDIR(atr.st_mode)) {
-                                        printf("Es un directorio\n");
-                                }
-
-                                if (S_ISREG(atr.st_mode)) {
-                                /* ficheros modificados en los últimos 10 días */
-                                if (((fecha) - 10 * 24 * 60 * 60) < atr.st_mtime) {
-                                        printf("FICHERO:%s: fecha acceso %s, en sgdos %ld\n",
-                                        rd1->d_name,
-                                        ctime(&atr.st_mtime),
-                                        atr.st_mtime);
-                                        }
-                                }
+                        if (S_ISDIR(atr.st_mode)) {
+                            printf("Es un directorio\n");
                         }
+
+                        if (S_ISREG(atr.st_mode)) {
+                            /* ficheros modificados en los últimos 10 días */
+                            if (((fecha) - 10 * 24 * 60 * 60) < atr.st_mtime) {
+                                printf("FICHERO:%s: fecha acceso %s, en sgdos %ld\n",
+                                       rd1->d_name,
+                                       ctime(&atr.st_mtime),
+                                       atr.st_mtime);
+                            }
+                        }
+                    }
                 } /* while */
                 closedir(d);
+            }
         }
-}/*main*/
+    }
+}/* main */
