@@ -33,10 +33,10 @@
 /************************************************************************************************************/
 
 int main(){
-        DIR *d;
+        DIR *d; // Puntero al directorio que se abrirá
         char nomdir[90], nomfich[90]; //Variables que guardan el nombre de directorio y del  fichero
-        struct stat datos;
-        struct dirent *direc;
+        struct stat datos; // Estructura para almacenar datos del archivo
+        struct dirent *direc; // Estructura que almacena la información de cada entrada del directorio
 
         printf ("Introduzca el Nombre de un Directorio: ");
         fgets (nomdir,sizeof(nomdir),stdin); //Guarda el nombre y el tamaño del directorio
