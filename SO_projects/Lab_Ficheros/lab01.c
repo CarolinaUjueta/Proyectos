@@ -8,7 +8,9 @@
 /*                retorna el tamaño de los ficheros que contiene.                                         */
 /*                                                                                                        */
 /*  Características principales:                                                                          */
-/*   - Uso de libreria stat para la comprobación de diferentes estados de un directorio.                  */
+/*   - Uso de la librería <stat.h> para obtener atributos de archivos.                                    */
+/*   - Uso de la librería <dirent.h> para el manejo de directorios.                                       */
+/*   - Empleo de estructuras para obtener el tamaño de los archivos.                                      */
 /**********************************************************************************************************/
 
 #include <sys/types.h> //Define un conjunto de tipos de datos
