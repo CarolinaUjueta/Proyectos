@@ -117,3 +117,15 @@ int main() {
         }
     }
 }/* main */
+
+/************************************************************************************************************/
+/*  Conclusiones:                                                                                           */
+/*                                                                                                          */
+/*      Este laboratorio permite el entendimiento de los directorios y ficheros.                            */                                      */
+/*      Nos permite una mejor organización y separación de responsabilidades.                               */
+/*      En este caso, podemos gestionar los propietarios, la última fecha de modificación e identifica si   */
+/*      son ficheros o directorios.                                                                         */
+/*      También nos ayuda a aclarar el funcionamiento de la memoria no volátil, ya que se conservan los     */
+/*      datos en memoria, a pesar de que se apague el sistema.                                              */
+/*                                                                                                          */
+/************************************************************************************************************/
