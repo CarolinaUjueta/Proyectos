@@ -5,9 +5,9 @@
 /*                                                                                                          */
 /*  Descripción:                                                                                            */
 /*                Este programa solicita al usuario el nombre de un directorio y, a partir de él,           */
-/*                recorre su contenido mostrando los ficheros que contiene. Además, verifica los permisos    */
+/*                recorre su contenido mostrando los ficheros que contiene. Además, verifica los permisos   */
 /*                de lectura del propietario, identifica si los elementos son directorios o ficheros,       */
-/*                e imprime información adicional sobre los archivos modificados en los últimos 10 días.     */
+/*                e imprime información adicional sobre los archivos modificados en los últimos 10 días.    */
 /*                                                                                                          */
 /*  Características principales:                                                                            */
 /*   - Uso de la librería <stat.h> para obtener atributos de archivos.                                      */
