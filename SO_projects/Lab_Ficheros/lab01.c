@@ -1,15 +1,15 @@
-/**********************************************************************************************************>
-/*  Programa:     Directorios y ficheros                                                                   >
-/*  Autor:        Carolina Ujueta Ricardo                                                                  >
-/*  Fecha:        11 de noviembre de 2025                                                                  >
-/*                                                                                                         >
-/*  Descripción:                                                                                           >
-/*                Este programa se encarga de recibir el nombre de un directorio y a su vez,               >
-/*                retorna el tamaño de los ficheros que contiene.                                          >
-/*                                                                                                         >
-/*  Características principales:                                                                           >
-/*   - Uso de libreria stat para la comprobación de diferentes estados de un directorio.                   >
-/*+++******************************************************************************************************>
+/**********************************************************************************************************/
+/*  Programa:     Directorios y ficheros                                                                  */
+/*  Autor:        Carolina Ujueta Ricardo                                                                 */
+/*  Fecha:        11 de noviembre de 2025                                                                 */
+/*                                                                                                        */
+/*  Descripción:                                                                                          */
+/*                Este programa se encarga de recibir el nombre de un directorio y a su vez,              */
+/*                retorna el tamaño de los ficheros que contiene.                                         */
+/*                                                                                                        */
+/*  Características principales:                                                                          */
+/*   - Uso de libreria stat para la comprobación de diferentes estados de un directorio.                  */
+/**********************************************************************************************************/
 
 #include <sys/types.h> //Define un conjunto de tipos de datos
 #include <sys/stat.h> //Libreria para uso de stat (estado)
