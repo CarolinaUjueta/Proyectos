@@ -57,3 +57,13 @@ int main(){
         }//Fin del While
         closedir(d);
 }
+/************************************************************************************************************/
+/*  Conclusiones:                                                                                           */
+/*                                                                                                          */
+/*      Este laboratorio permite el entendimiento de los directorios y ficheros                             */
+/*      Se pueden imaginar como un árbol con jerarquía donde los nodos padre son los directorios            */
+/*      y los nodos hijos podrían representarse como los ficheros.                                          */
+/*      Nos permite una mejor organización y separación de responsabilidades, es decir, se puede gestionar  */
+/*      quién es el propietario de cada archivo y sus tamaños.                                              */
+/*                                                                                                          */
+/************************************************************************************************************/
