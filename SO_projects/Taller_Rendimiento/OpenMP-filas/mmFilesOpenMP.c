@@ -8,7 +8,7 @@
 /*  mediante transposición (filas x filas) con OpenMP.                                                      */
 /************************************************************************************************************/
 
-#include "mmTransOpenMP.h"
+#include "mmFilasOpenMP.h"
 
 struct timeval inicio, fin;
 
