@@ -5,30 +5,29 @@
 #===============================================================================
 
 # Compilador y banderas
-GCC = gcc
+CC = gcc
 CFLAGS = -Wall -lm
 FOPENMP = -fopenmp -O3
 POSIX = -lpthread
 
-# Programas principales (ejecutables)
+# Programas (uno por carpeta)
 PROGRAMAS = mmClasicaFork mmClasicaOpenMP mmClasicaPosix mmFilasOpenMP
 
-# Regla general
+# Regla principal
 all: $(PROGRAMAS)
 
-# Compilaciones específicas
-mmClasicaFork: mmClasicaFork_main.c
-	$(GCC) $(CFLAGS) $< -o $@ $(POSIX)
+mmClasicaFork:
+	$(CC) $(CFLAGS) $(POSIX) Fork/mmClasicaFork_main.c -o $@
 
-mmClasicaOpenMP: mmClasicaOpenMP_main.c
-	$(GCC) $(CFLAGS) $< -o $@ $(FOPENMP)
+mmClasicaOpenMP:
+	$(CC) $(CFLAGS) $(FOPENMP) OpenMP/mmClasicaOpenMP_main.c -o $@
 
-mmClasicaPosix: mmClasicaPosix_main.c
-	$(GCC) $(CFLAGS) $< -o $@ $(POSIX)
+mmClasicaPosix:
+	$(CC) $(CFLAGS) $(POSIX) Posix/mmClasicaPosix_main.c -o $@
 
-mmFilasOpenMP: mmFilasOpenMP_main.c
-	$(GCC) $(CFLAGS) $< -o $@ $(FOPENMP)
+mmFilasOpenMP:
+	$(CC) $(CFLAGS) $(FOPENMP) OpenMP-filas/mmFilasOpenMP_main.c -o $@
 
-# Limpieza
 clean:
 	rm -f $(PROGRAMAS)
+
