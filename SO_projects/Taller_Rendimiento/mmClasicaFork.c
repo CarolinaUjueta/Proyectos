@@ -1,11 +1,21 @@
-/*#######################################################################################
-#* Fecha:
-#* Autor: J. Corredor, PhD
-#* Programa:
-#*      Multiplicación de Matrices algoritmo clásico
-#* Versión:
-#*      Paralelismo con Procesos Fork 
-######################################################################################*/
+/************************************************************************************************************/
+/*  PROGRAMA: Multiplicación de Matrices con Paralelismo mediante Procesos Fork                             */
+/*  AUTOR:  J. Corredor, PhD (documentado por Carolina Ujueta Ricardo estudiante de Ingeniería de Sistemas) */
+/*  FECHA:  13 Noviembre 2025                                                                               */
+/*                                                                                                          */
+/*  DESCRIPCIÓN:                                                                                            */
+/*  Este programa implementa la multiplicación de dos matrices cuadradas de tamaño N utilizando             */
+/*  paralelismo basado en procesos Fork. Cada proceso hijo calcula un subconjunto de filas de la            */
+/*  matriz resultado, mejorando la eficiencia computacional en sistemas multiprocesador.                    */
+/*                                                                                                          */
+/*  CARACTERÍSTICAS PRINCIPALES:                                                                            */
+/*  - Inicializa matrices con valores aleatorios.                                                           */
+/*  - Divide las filas entre múltiples procesos hijos.                                                      */
+/*  - Cada proceso calcula su bloque de la matriz resultado.                                                */
+/*  - Utiliza temporización para medir el tiempo total de ejecución.                                        */
+/*  - Permite definir el tamaño de la matriz y el número de procesos desde la línea de comandos.            */
+/*                                                                                                          */
+/************************************************************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,108 +24,158 @@
 #include <sys/time.h>
 #include <time.h>
 
+/* Variables globales para medición de tiempo */
 struct timeval inicio, fin;
 
+/*------------------------------------------------------------------------------------------
+ *  FUNCIÓN: InicioMuestra
+ *  Descripción:
+ *      Registra el tiempo de inicio de la ejecución para medir el tiempo total del proceso.
+ *-----------------------------------------------------------------------------------------*/
 void InicioMuestra(){
-	gettimeofday(&inicio, (void *)0);
+    gettimeofday(&inicio, (void *)0);
 }
 
+/*------------------------------------------------------------------------------------------
+ *  FUNCIÓN: FinMuestra
+ *  Descripción:
+ *      Calcula y muestra el tiempo total transcurrido desde el inicio hasta el final.
+ *-----------------------------------------------------------------------------------------*/
 void FinMuestra(){
-	gettimeofday(&fin, (void *)0);
-	fin.tv_usec -= inicio.tv_usec;
-	fin.tv_sec  -= inicio.tv_sec;
-	double tiempo = (double) (fin.tv_sec*1000000 + fin.tv_usec);
-	printf("%9.0f \n", tiempo);
+    gettimeofday(&fin, (void *)0);
+    fin.tv_usec -= inicio.tv_usec;
+    fin.tv_sec  -= inicio.tv_sec;
+    double tiempo = (double) (fin.tv_sec*1000000 + fin.tv_usec);
+    printf("\nTiempo total de ejecución: %9.0f microsegundos\n", tiempo);
 }
 
+/*------------------------------------------------------------------------------------------
+ *  FUNCIÓN: multiMatrix
+ *  Parámetros:
+ *      - mA, mB, mC: punteros a las matrices A, B y C.
+ *      - D: dimensión de la matriz.
+ *      - filaI, filaF: rango de filas que calcula el proceso.
+ *  Descripción:
+ *      Calcula la multiplicación clásica de matrices en el rango asignado a cada proceso.
+ *-----------------------------------------------------------------------------------------*/
 void multiMatrix(double *mA, double *mB, double *mC, int D, int filaI, int filaF) {
-	double Suma, *pA, *pB;
+    double Suma, *pA, *pB;
     for (int i = filaI; i < filaF; i++) {
         for (int j = 0; j < D; j++) {
-			Suma = 0.0;
-			pA = mA+i*D;
-			pB = mB+j;
-            for (int k = 0; k < D; k++, pA++, pB+=D) {
-				Suma += *pA * *pB;	
+            Suma = 0.0;
+            pA = mA + i*D;
+            pB = mB + j;
+            for (int k = 0; k < D; k++, pA++, pB += D) {
+                Suma += *pA * *pB;
             }
-			mC[i*D+j] = Suma;
+            mC[i*D + j] = Suma;
         }
     }
 }
 
+/*------------------------------------------------------------------------------------------
+ *  FUNCIÓN: impMatrix
+ *  Descripción:
+ *      Imprime en consola una matriz cuadrada (solo si D < 9 para evitar saturación).
+ *-----------------------------------------------------------------------------------------*/
 void impMatrix(double *matrix, int D) {
-	if (D < 9) {
-    	printf("\nImpresión	...\n");
-    	for (int i = 0; i < D*D; i++, matrix++) {
-			if(i%D==0) printf("\n");
-            	printf(" %.2f ", *matrix);
-        	}
-        printf("\n ");
+    if (D < 9) {
+        printf("\nImpresión de matriz:\n");
+        for (int i = 0; i < D*D; i++, matrix++) {
+            if (i % D == 0) printf("\n");
+            printf(" %.2f ", *matrix);
+        }
+        printf("\n");
     }
 }
 
+/*------------------------------------------------------------------------------------------
+ *  FUNCIÓN: iniMatrix
+ *  Descripción:
+ *      Inicializa las matrices A y B con valores aleatorios en rangos diferentes.
+ *-----------------------------------------------------------------------------------------*/
 void iniMatrix(double *mA, double *mB, int D){
-	for (int i = 0; i < D*D; i++, mA++, mB++){
-            *mA = (double)rand()/RAND_MAX*(5.0-1.0); ; 
-            *mB = (double)rand()/RAND_MAX*(9.0-5.0); 
-        }
+    for (int i = 0; i < D*D; i++, mA++, mB++){
+        *mA = (double)rand() / RAND_MAX * (5.0 - 1.0);
+        *mB = (double)rand() / RAND_MAX * (9.0 - 5.0);
+    }
 }
 
+/*------------------------------------------------------------------------------------------
+ *  FUNCIÓN PRINCIPAL
+ *-----------------------------------------------------------------------------------------*/
 int main(int argc, char *argv[]) {
-	if (argc < 3) {
-		printf("\n \t\tUse: $./nom_ejecutable Size Hilos \n");
-		exit(0);
-	}
-	int N      = (int) atoi(argv[1]);
-	int num_P  = (int) atoi(argv[2]);
-	double *matA = (double *) calloc(N*N, sizeof(double));
-	double *matB = (double *) calloc(N*N, sizeof(double));
-	double *matC = (double *) calloc(N*N, sizeof(double));
+    if (argc < 3) {
+        printf("\nUso correcto: ./nom_ejecutable <Tamaño_Matriz> <Número_Procesos>\n");
+        exit(0);
+    }
 
-    srand(time(0)); 
-    
+    int N     = atoi(argv[1]);   // Tamaño de la matriz
+    int num_P = atoi(argv[2]);   // Número de procesos
+    double *matA = (double *) calloc(N*N, sizeof(double));
+    double *matB = (double *) calloc(N*N, sizeof(double));
+    double *matC = (double *) calloc(N*N, sizeof(double));
+
+    srand(time(0));
+
     iniMatrix(matA, matB, N);
     impMatrix(matA, N);
     impMatrix(matB, N);
-    
-    int rows_per_process = N/num_P;
 
-	InicioMuestra();
+    int rows_per_process = N / num_P;
 
+    /* Inicia medición de tiempo */
+    InicioMuestra();
+
+    /* Creación de procesos hijos */
     for (int i = 0; i < num_P; i++) {
         pid_t pid = fork();
-        
-        if (pid == 0) { 
+
+        if (pid == 0) { // Proceso hijo
             int start_row = i * rows_per_process;
             int end_row = (i == num_P - 1) ? N : start_row + rows_per_process;
-            
-			multiMatrix(matA, matB, matC, N, start_row, end_row); 
-            
-			if(N<9){
-           		printf("\nChild PID %d calculated rows %d to %d:\n", getpid(), start_row, end_row-1);
-            	for (int r = start_row; r < end_row; r++) {
-                	for (int c = 0; c < N; c++) {
-                    	printf(" %.2f ", matC[N*r+c]);
-                	}
-                	printf("\n");
-            	}
-			}
-            exit(0); 
+
+            multiMatrix(matA, matB, matC, N, start_row, end_row);
+
+            if (N < 9) {
+                printf("\n[Proceso hijo PID %d] Calculó filas %d a %d:\n", getpid(), start_row, end_row - 1);
+                for (int r = start_row; r < end_row; r++) {
+                    for (int c = 0; c < N; c++) {
+                        printf(" %.2f ", matC[N*r + c]);
+                    }
+                    printf("\n");
+                }
+            }
+            exit(0); // Finaliza hijo
         } else if (pid < 0) {
-            perror("fork failed");
+            perror("Error al crear proceso con fork()");
             exit(1);
         }
     }
-    
+
+    /* Espera a que terminen todos los procesos hijos */
     for (int i = 0; i < num_P; i++) {
         wait(NULL);
     }
-  	
-	FinMuestra(); 
- 
-	free(matA);
-	free(matB);
-	free(matC);
+
+    /* Finaliza medición de tiempo */
+    FinMuestra();
+
+    free(matA);
+    free(matB);
+    free(matC);
 
     return 0;
 }
+/************************************************************************************************************/
+/*  USO:                                                                                                    */
+/*      $ ./multiMatrix <Tamaño_Matriz> <Número_Procesos>                                                   */
+/*                                                                                                          */
+/*  EJEMPLO:                                                                                                */
+/*      $ ./multiMatrix 4 2                                                                                 */
+/*                                                                                                          */
+/*  SALIDA (para matrices pequeñas):                                                                        */
+/*      Impresión de matrices A y B generadas, además de la matriz C calculada por cada proceso.            */
+/*      Finalmente, muestra el tiempo total de ejecución en microsegundos.                                  */
+/*                                                                                                          */
+/************************************************************************************************************/
