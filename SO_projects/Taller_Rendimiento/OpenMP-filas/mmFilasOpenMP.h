@@ -8,8 +8,8 @@
 /*  de multiplicación de matrices transpuestas con paralelismo OpenMP.                                      */
 /************************************************************************************************************/
 
-#ifndef MM_TRANS_OPENMP_H
-#define MM_TRANS_OPENMP_H
+#ifndef MM_FILAS_OPENMP_H
+#define MM_FILAS_OPENMP_H
 
 #include <stdio.h>
 #include <stdlib.h>
