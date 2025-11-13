@@ -16,7 +16,7 @@
 
 #include "mmClasicaOpenMP.h"
 
-extern struct timeval inicio, fin;
+struct timeval inicio, fin;
 
 /*------------------------------------------------------------------------------------------
  *  FUNCIÓN: InicioMuestra
