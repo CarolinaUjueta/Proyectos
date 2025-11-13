@@ -9,8 +9,8 @@
 /*                                                                                                          */
 /************************************************************************************************************/
 
-#ifndef FUNCIONES_H
-#define FUNCIONES_H
+#ifndef MMCLASICAFORK_H
+#define MMCLASICAFORK_H
 
 #include <stdio.h>
 #include <stdlib.h>
