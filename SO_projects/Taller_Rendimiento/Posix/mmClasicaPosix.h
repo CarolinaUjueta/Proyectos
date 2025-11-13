@@ -9,8 +9,8 @@
 /*                                                                                                          */
 /************************************************************************************************************/
 
-#ifndef MMCLASICAPTHREAD_H
-#define MMCLASICAPTHREAD_H
+#ifndef MM_CLASICA_POSIX_H
+#define MM_CLASICA_POSIX_H
 
 #include <stdio.h>
 #include <stdlib.h>
