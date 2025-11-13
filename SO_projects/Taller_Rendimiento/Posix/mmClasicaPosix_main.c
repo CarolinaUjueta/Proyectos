@@ -18,7 +18,7 @@
 /*  - Permite definir el tamaño de la matriz y el número de hilos desde la línea de comandos.               */
 /************************************************************************************************************/
 
-#include "mmClasicaPthread.h"
+#include "mmClasicaPosix.h"
 
 /*------------------------------------------------------------------------------------------
  *  FUNCIÓN PRINCIPAL
