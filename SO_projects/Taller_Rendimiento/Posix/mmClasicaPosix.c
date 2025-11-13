@@ -9,7 +9,7 @@
 /*  multiplicación y la medición del tiempo de ejecución.                                                   */
 /************************************************************************************************************/
 
-#include "mmClasicaPthread.h"
+#include "mmClasicaPosix.h"
 
 /*------------------------------------------------------------------------------------------
  *  FUNCIONES DE MEDICIÓN DE TIEMPO
