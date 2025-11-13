@@ -19,7 +19,7 @@
 #include <omp.h>
 
 /* Variables globales para medición */
-extern struct timeval inicio, fin;
+struct timeval inicio, fin;
 
 /* Prototipos de funciones */
 void InicioMuestra();
