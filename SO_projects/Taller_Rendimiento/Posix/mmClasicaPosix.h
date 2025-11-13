@@ -21,9 +21,9 @@
 /*------------------------------------------------------------------------------------------
  *  VARIABLES GLOBALES
  *-----------------------------------------------------------------------------------------*/
-extern pthread_mutex_t MM_mutex;
-extern double *matrixA, *matrixB, *matrixC;
-extern struct timeval inicio, fin;
+pthread_mutex_t MM_mutex;
+double *matrixA, *matrixB, *matrixC;
+struct timeval inicio, fin;
 
 /*------------------------------------------------------------------------------------------
  *  ESTRUCTURA DE PARÁMETROS PARA LOS HILOS
