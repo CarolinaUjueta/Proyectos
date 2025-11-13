@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 #**************************************************************
 #         		Pontificia Universidad Javeriana
-#     Autor: 
-#     Fecha: 
+#     Autor: Carolina Ujueta Ricardo
+#     Fecha: 13 de noviembre, 2025
 #     Materia: Sistemas Operativos
 #     Tema: Taller de Evaluación de Rendimiento
 #     Fichero: script automatización ejecución por lotes 
