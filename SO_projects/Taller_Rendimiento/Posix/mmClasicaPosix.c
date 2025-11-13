@@ -1,11 +1,11 @@
 /************************************************************************************************************/
-/*  ARCHIVO: funciones.c                                                                                    */
+/*  ARCHIVO: mmClasicaPosix.c                                                                               */
 /*  AUTOR:  J. Corredor, PhD (documentado por Carolina Ujueta Ricardo, estudiante de Ingeniería de Sistemas)*/
 /*  FECHA:  13 Noviembre 2025                                                                               */
 /*                                                                                                          */
 /*  DESCRIPCIÓN:                                                                                            */
-/*  Implementación de las funciones auxiliares utilizadas en la multiplicación de matrices mediante          */
-/*  hilos POSIX (Pthreads). Incluye la inicialización de matrices, su impresión, el cálculo de la            */
+/*  Implementación de las funciones auxiliares utilizadas en la multiplicación de matrices mediante         */
+/*  hilos POSIX (Pthreads). Incluye la inicialización de matrices, su impresión, el cálculo de la           */
 /*  multiplicación y la medición del tiempo de ejecución.                                                   */
 /************************************************************************************************************/
 
