@@ -14,16 +14,7 @@
 /*                                                                                                          */
 /************************************************************************************************************/
 
-#ifndef MMCLASICAOPENMP_H
-#define MMCLASICAOPENMP_H
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <sys/time.h>
-#include <omp.h>
-
-struct timeval inicio, fin;
+#include "mmClasicaOpenMP.h"
 
 /*------------------------------------------------------------------------------------------
  *  FUNCIÓN: InicioMuestra
@@ -111,8 +102,6 @@ void multiMatrix(double *mA, double *mB, double *mC, int D) {
         }
     }
 }
-
-#endif
 /************************************************************************************************************/
 /*  FIN DEL ARCHIVO: mmClasicaOpenMP.h                                                                      */
 /************************************************************************************************************/
