@@ -9,6 +9,18 @@
 *                semaforos POSIX con nombre para sincronizar y memoria compartida para intercambiar *
 *                datos con el productor.                                                            *
 *                                                                                                   *
+* Descripcion:                                                                                      *
+* Este programa actúa como CONSUMIDOR. Se conecta a los semáforos y a la memoria compartida que     *
+* el productor creó previamente, y extrae 10 elementos del búfer circular compartido.               *
+*                                                                                                   *
+* Elementos clave:                                                                                  *
+*   • Usa semáforos con nombre:                                                                     *
+*         - /vacio : indica que hay espacio libre en el búfer (lo incrementa el consumidor).        *
+*         - /lleno : indica que hay elementos disponibles (lo decrementa el consumidor).            *
+*                                                                                                   *
+*   • Usa un segmento de memoria compartida que contiene:                                           *
+*         - Un arreglo circular de enteros (bus[])                                                  *
+*         - El índice de lectura (salida)                                                           *
 *****************************************************************************************************
 *                                                                                                   *
 *                                   HOW TO USE / COMPILE / RUN                                      *
