@@ -7,6 +7,20 @@
 * Profesor:  John Jairo Corredor Franco                                                         *
 * Objetivo:  Crear y gestionar los hilos productores y el hilo spooler que comparten buferes    *
 *            de impresion utilizando pthreads.                                                  *
+*                                                                                               *
+* Descripcion:                                                                                  *
+* El programa implementa el modelo Productor–Consumidor usando 10 hilos productores y un hilo   *
+* spooler. Todos comparten un búfer circular de 100 posiciones donde los productores escriben   *
+* mensajes y el spooler los imprime en orden.                                                   *
+*                                                                                               *
+* La sincronización evita que:                                                                  *
+*   - Un productor escriba cuando no hay espacio disponible.                                    *
+*   - El spooler lea cuando no hay líneas por imprimir.                                         *
+*                                                                                               *
+* Se emplean:                                                                                   *
+*   • Mutex: protege índices y contadores del búfer.                                            *
+*   • pthread_cond_t buf_cond: despierta productores cuando hay espacio.                        *
+*   • pthread_cond_t spool_cond: despierta al spooler cuando hay nuevas líneas.                 *
 *************************************************************************************************
 * HOW TO USE                                                                                    *
 * --------------------------------------------------------------------------------------------- *
