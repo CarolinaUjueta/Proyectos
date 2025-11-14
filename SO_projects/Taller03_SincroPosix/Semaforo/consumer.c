@@ -1,12 +1,10 @@
 /****************************************************************************************************
-*                                  PONTIFICIA UNIVERSIDAD JAVERIANA                                 *
-*                                       Departamento de Sistemas                                    *
-*                                       SISTEMAS OPERATIVOS                                         *
+*                               Pontificia Universidad Javeriana                                    *
 *                                                                                                   *
-*  Autor:        Carolina Ujueta Ricardo                                                            *
-*  Fecha:        2025-11-09                                                                         *
-*  Materia:      Sistemas Operativos                                                                *
-*  Profesor:     Dr. John Jairo Corredor                                                            *
+* Autor:     Thomas Leal PUerta, Carolina Ujueta Ricardo                                            *
+* Fecha:     13/11/2025                                                                             *
+* Materia:   Sistemas Operativos                                                                    *
+* Profesor:  John Jairo Corredor Franco                                                             *
 *  Objetivo:     Implementar el proceso CONSUMIDOR del problema Productor–Consumidor, utilizando    *
 *                semaforos POSIX con nombre para sincronizar y memoria compartida para intercambiar *
 *                datos con el productor.                                                            *
@@ -14,7 +12,7 @@
 *****************************************************************************************************
 *                                                                                                   *
 *                                   HOW TO USE / COMPILE / RUN                                      *
-*  COMPILAR:   gcc -o consumer consumer.c -lrt -pthread                                             *
+*  COMPILAR:   gcc consumer.c -o consumer                                                           *
 *  EJECUTAR:   ./consumer                                                                           *
 *  NOTAS:      - Espera a que el productor cree los semaforos y la memoria compartida.              *
 *              - Consume 10 elementos del bufer circular compartido.                                *
@@ -26,13 +24,12 @@
 
 /****************************************************************************************************
 *                                                                                                   *
-*  Funcion:      int main(void)                                                                     *
+*  Funcion:      int main()                                                                         *
 *  Proposito:    Abrir los semaforos y el segmento de memoria compartida creados por el productor,  *
 *                y consumir 10 elementos del bufer circular respetando la sincronizacion.           *
-*  Retorno:       0 si no hay errores; EXIT_FAILURE en caso de fallo.                               *
 *                                                                                                   *
 *****************************************************************************************************/
-int main(void) {
+int main() {
     /* ---- Abrir semaforos con nombre (deben existir) ---- */
     sem_t *vacio = sem_open("/vacio", 0);
     sem_t *lleno = sem_open("/lleno", 0);
@@ -61,7 +58,7 @@ int main(void) {
 
     /* ---- Consumir 10 elementos, respetando la disponibilidad de datos ---- */
     for (int i = 1; i <= 10; i++) {
-        /* ---- Esperar a que haya al menos un elemento disponible (P en lleno) ---- */
+        /* ---- Esperar a que haya al menos un elemento disponible ---- */
         sem_wait(lleno);
 
         /* ---- Leer elemento y avanzar indice circular ---- */
@@ -69,7 +66,7 @@ int main(void) {
         printf("Consumidor: Consume %d\n", item);
         compartir->salida = (compartir->salida + 1) % BUFFER;
 
-        /* ---- Sennalar que quedo un espacio libre (V en vacio) ---- */
+        /* ---- Sennalar que quedo un espacio libre ---- */
         sem_post(vacio);
 
         /* ---- Ritmo de consumo (simulacion) ---- */
