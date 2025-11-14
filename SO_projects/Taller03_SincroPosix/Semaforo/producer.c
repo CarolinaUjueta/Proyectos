@@ -9,6 +9,20 @@
 *  Profesor:     Dr. John Jairo Corredor                                                            *
 *  Objetivo:     Implementar el proceso PRODUCTOR del problema Productor–Consumidor empleando       *
 *                semaforos POSIX con nombre y memoria compartida (POSIX shm + mmap).                *
+*                                                                                                   *
+* Descripcion:                                                                                      *
+* Este proceso implementa el rol de PRODUCTOR. Su responsabilidad es crear la memoria compartida    *
+* y los semáforos con nombre que serán usados también por el consumidor.                            *
+*                                                                                                   *
+* Componentes principales:                                                                          *
+*   • Semáforos POSIX con nombre:                                                                   *
+*         /vacio → Cuenta los espacios libres del búfer (inicia en BUFFER).                         *
+*         /lleno → Cuenta los elementos listos para consumir (inicia en 0).                         *
+*                                                                                                   *
+*   • Memoria compartida:                                                                           *
+*         Segmento shm "/memoria_compartida" que contiene:                                          *
+*             - Un búfer circular de enteros (bus[])                                                *
+*             - El índice de escritura (entrada)                                                    *
 *****************************************************************************************************
 *                                   HOW TO USE / COMPILE / RUN                                      *
 *  COMPILAR:   gcc producer.c -o producer                                                           *
