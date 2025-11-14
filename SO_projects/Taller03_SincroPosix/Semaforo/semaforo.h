@@ -1,10 +1,9 @@
 /************************************************************************************************
 *                               Pontificia Universidad Javeriana                                *
 *                                                                                               *
-* Autor:     Carolina Ujueta Ricardo                                                            *
+* Autor:     Thomas Leal PUerta, Carolina Ujueta Ricardo                                        *
 * Fecha:     13/11/2025                                                                         *
 * Materia:   Sistemas Operativos                                                                *
-* Profesor:  John Jairo Corredor, PhD                                                           *
 * Objetivo:  Definir la estructura de datos compartida y el tamanno del bufer para productor y  *
 *            consumidor utilizando memoria compartida.                                          *
 ************************************************************************************************/
