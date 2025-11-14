@@ -11,14 +11,14 @@
 *                semaforos POSIX con nombre y memoria compartida (POSIX shm + mmap).                *
 *****************************************************************************************************
 *                                   HOW TO USE / COMPILE / RUN                                      *
-*  COMPILAR:   gcc -o producer producer.c -lrt -pthread                                             *
+*  COMPILAR:   gcc producer.c -o producer                                                           *
 *  EJECUTAR:   ./producer                                                                           *
 *  NOTAS:      - Requiere que el encabezado compartido defina: BUFFER y la struct compartir_datos.  *
 *              - Este proceso crea/ajusta la memoria compartida y los semaforos con nombre.         *
 *              - Empuja 10 elementos al bufer circular.                                             *
 *****************************************************************************************************/
 
-/*============================================== Headers ==========================================*/
+/* ============================================== Headers ========================================== */
 
 #include "semaforo.h"
 
@@ -27,8 +27,6 @@
 *  Proposito:    Crear/abrir los semaforos con nombre y la memoria compartida; producir 10 elementos*
 *                en el bufer circular, sincronizando con semaforos vacio (espacios libres) y        *
 *                lleno (espacios ocupados).                                                         *
-*  Parametros:   (ninguno)                                                                          *
-*  Retorno:      1 si no hay errores; EXIT_FAILURE en caso de fallo.                                *
 *****************************************************************************************************/
 int main() {
     /* ---- Abrir/crear semaforos con nombre: vacio y lleno ---- */
