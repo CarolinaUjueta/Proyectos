@@ -1,7 +1,7 @@
 # Actividad 1 — POSIX Semáforos (Productor/Consumidor)  
 Pontificia Universidad Javeriana  
 Profesor: John Jairo Corredor, PhD  
-Autor: Carolina Ujueta Ricardo 
+Autor: Carolina Ujueta Ricardo  
 Fecha: 13 Noviembre de 2025  
 
 ## Introducción
