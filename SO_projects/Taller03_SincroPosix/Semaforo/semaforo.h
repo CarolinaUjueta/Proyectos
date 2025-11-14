@@ -1,12 +1,19 @@
-/************************************************************************************************
-*                               Pontificia Universidad Javeriana                                *
-*                                                                                               *
-* Autor:     Thomas Leal PUerta, Carolina Ujueta Ricardo                                        *
-* Fecha:     13/11/2025                                                                         *
-* Materia:   Sistemas Operativos                                                                *
-* Objetivo:  Definir la estructura de datos compartida y el tamanno del bufer para productor y  *
-*            consumidor utilizando memoria compartida.                                          *
-************************************************************************************************/
+/*************************************************************************************************
+*                               Pontificia Universidad Javeriana                                 *
+*                                                                                                *
+* Autor:     Thomas Leal PUerta, Carolina Ujueta Ricardo                                         *
+* Fecha:     13/11/2025                                                                          *
+* Materia:   Sistemas Operativos                                                                 *
+* Objetivo:  Definir la estructura de datos compartida y el tamanno del bufer para productor y   *
+*            consumidor utilizando memoria compartida.                                           *
+*                                                                                                *
+* Descripcion:                                                                                   *
+*  Este archivo centraliza las definiciones que ambos procesos necesitan para trabajar sobre     *
+*  la misma región de memoria compartida. Se establece el tamaño fijo del búfer circular y se    *
+*  define la estructura que contiene los índices de lectura/escritura, garantizando así que      *
+*  Productor y Consumidor operen sobre un modelo coherente. Incluye además las librerías         *
+*  requeridas para shm_open, mmap y semáforos POSIX, asegurando compatibilidad en ambos lados.   *
+*************************************************************************************************/
 
 #ifndef __SEMAFORO_H__
 #define __SEMAFORO_H__
