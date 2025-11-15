@@ -1,4 +1,4 @@
-/************************************************************************************************************
+/************************************************************************************************************/
 /*  PROGRAMA: Multiplicación de Matrices con Paralelismo mediante Procesos Fork                             */
 /*  AUTOR:    J. Corredor, PhD (documentado por estudiante de Ingeniería de Sistemas – PUJ)                 */
 /*  FECHA:    Noviembre 2025                                                                                */
