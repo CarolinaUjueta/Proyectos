@@ -2,8 +2,6 @@
 
 Este proyecto implementa diferentes versiones del algoritmo de multiplicación de matrices cuadradas y compara su rendimiento mediante técnicas de paralelismo: **Fork**, **POSIX Threads**, **OpenMP** y **OpenMP por Filas**.
 
-Se incluyen herramientas de automatización, recolección de datos y análisis comparativo para estudiar el comportamiento de cada técnica frente a variaciones en tamaño de matriz y número de hilos.
-
 ---
 
 El proyecto incluye las siguientes versiones del algoritmo:
@@ -90,6 +88,3 @@ En todas las técnicas:
 * Tendencia muy similar a OpenMP estándar.
 * El peor caso aparece en 4 hilos.
 * Se presenta una caída en 8 hilos, aunque sigue siendo inestable.
-
-
-Solo dímelo.
