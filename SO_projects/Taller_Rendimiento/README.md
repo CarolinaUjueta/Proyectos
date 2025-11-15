@@ -88,3 +88,35 @@ En todas las técnicas:
 * Tendencia muy similar a OpenMP estándar.
 * El peor caso aparece en 4 hilos.
 * Se presenta una caída en 8 hilos, aunque sigue siendo inestable.
+
+## parseResultados.c — Conversión a CSV
+
+Este archivo toma todos los archivos .dat y genera un CSV con la siguiente estructura:
+
+Algoritmo;TamMatriz;Hilos;Repeticion;Tiempo_microsegundos
+
+Lee el nombre del archivo
+Extrae:
+
+Algoritmo (ej. mmClasicaFork)
+
+Tamaño de la matriz
+
+Número de hilos
+Ejemplo:
+mmClasicaFork-5-Hilos-8.dat → 5, 8.
+
+Abre el archivo .dat y busca líneas con:
+"Tiempo total de ejecución"
+
+Por cada coincidencia escribe una fila en el CSV.
+
+Cómo compilar:
+gcc -Wall -Wextra -std=c11 parseResultados.c -o parseResultados
+
+Cómo usar:
+
+Ejemplo para procesar todos los .dat:
+
+./parseResultados resultados.csv mmClasicaFork-*.dat
+
