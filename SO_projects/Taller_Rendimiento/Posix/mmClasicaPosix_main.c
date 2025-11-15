@@ -18,11 +18,48 @@
 /*  - Permite definir el tamaño de la matriz y el número de hilos desde la línea de comandos.               */
 /************************************************************************************************************/
 
-#include "mmClasicaPosix.h"
+/***************************************** Headers **********************************************/
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <time.h>
+#include <sys/time.h>
 
-/*------------------------------------------------------------------------------------------
- *  FUNCIÓN PRINCIPAL
- *-----------------------------------------------------------------------------------------*/
+/*************************************** Variables Globales ***********************************/
+pthread_mutex_t MM_mutex;
+double *matrixA, *matrixB, *matrixC;
+struct timeval inicio, fin;
+
+struct parametros {
+    int nH;   // Número total de hilos
+    int idH;  // Identificador del hilo
+    int N;    // Dimensión de la matriz
+};
+
+
+/*************************************** Declaracion Funciones ***********************************/
+void InicioMuestra();
+void FinMuestra();
+void iniMatrix(double *m1, double *m2, int D);
+void impMatrix(double *matriz, int D);
+void *multiMatrix(void *variables);
+
+/****************************************************************************************************
+ * Firma:     int main(int argc, char *argv[])                                                      *
+ *                                                                                                  *
+ * Propósito:                                                                                       *
+ *   Inicializar las estructuras necesarias para la multiplicación de matrices usando pthreads,     *
+ *   lanzar los hilos de trabajo, medir el tiempo de ejecución y mostrar el resultado.              *
+ *                                                                                                  *
+ * Parámetros:                                                                                      *
+ *   - argc : número de argumentos de línea de comandos.                                            *
+ *   - argv : arreglo de cadenas:                                                                   *
+ *            argv[1] -> tamaño de la matriz (N).                                                   *
+ *            argv[2] -> número de hilos (n_threads).                                               *
+ *                                                                                                  *
+ * Retorno:                                                                                         *
+ *   - 0 cuando el programa finaliza correctamente.                                                 *
+ ****************************************************************************************************/
 int main(int argc, char *argv[]) {
 
     if (argc < 3) {
@@ -84,6 +121,137 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
+
+/****************************************************************************************************
+ * Firma:     void InicioMuestra()                                                                  *
+ *                                                                                                  *
+ * Propósito:                                                                                       *
+ *   Tomar una marca de tiempo inicial usando gettimeofday para medir el tiempo de ejecución        *
+ *   de la sección crítica del programa (multiplicación de matrices).                               *
+ *                                                                                                  *
+ * Parámetros:                                                                                      *
+ *   - Ninguno.                                                                                     *
+ *                                                                                                  *
+ * Retorno:                                                                                         *
+ *   - Ninguno.                                                                                     *
+ ****************************************************************************************************/
+void InicioMuestra() {
+    gettimeofday(&inicio, (void *)0);
+}
+
+
+/****************************************************************************************************
+ * Firma:     void FinMuestra()                                                                     *
+ *                                                                                                  *
+ * Propósito:                                                                                       *
+ *   Tomar la marca de tiempo final, calcular la diferencia con respecto al inicio y mostrar el     *
+ *   tiempo total de ejecución en segundos (a partir de microsegundos).                             *
+ *                                                                                                  *
+ * Parámetros:                                                                                      *
+ *   - Ninguno.                                                                                     *
+ *                                                                                                  *
+ * Retorno:                                                                                         *
+ *   - Ninguno.                                                                                     *
+ ****************************************************************************************************/
+void FinMuestra() {
+    gettimeofday(&fin, (void *)0);
+    fin.tv_usec -= inicio.tv_usec;
+    fin.tv_sec  -= inicio.tv_sec;
+    double tiempo = (double)(fin.tv_sec * 1000000 + fin.tv_usec);
+    printf("\nTiempo total de ejecución: %.6f segundos\n", tiempo / 1e6);
+}
+
+
+/****************************************************************************************************
+ * Firma:     void iniMatrix(double *m1, double *m2, int D)                                         *
+ *                                                                                                  *
+ * Propósito:                                                                                       *
+ *   Inicializar las matrices A y B con valores aleatorios en rangos definidos para realizar        *
+ *   posteriormente la multiplicación matricial.                                                    *
+ *                                                                                                  *
+ * Parámetros:                                                                                      *
+ *   - m1 : puntero a la primera matriz (A), de tamaño D x D.                                       *
+ *   - m2 : puntero a la segunda matriz (B), de tamaño D x D.                                       *
+ *   - D  : dimensión de las matrices (número de filas y columnas).                                 *
+ *                                                                                                  *
+ * Retorno:                                                                                         *
+ *   - Ninguno.                                                                                     *
+ ****************************************************************************************************/
+void iniMatrix(double *m1, double *m2, int D) {
+    for (int i = 0; i < D * D; i++, m1++, m2++) {
+        *m1 = (double)rand() / RAND_MAX * (5.0 - 1.0);
+        *m2 = (double)rand() / RAND_MAX * (9.0 - 5.0);
+    }
+}
+
+
+/****************************************************************************************************
+ * Firma:     void impMatrix(double *matriz, int D)                                                 *
+ *                                                                                                  *
+ * Propósito:                                                                                       *
+ *   Imprimir en consola el contenido de una matriz cuadrada de tamaño D x D, siempre que D sea     *
+ *   menor que 9, para evitar saturar la salida estándar con matrices grandes.                      *
+ *                                                                                                  *
+ * Parámetros:                                                                                      *
+ *   - matriz : puntero a la matriz a imprimir.                                                     *
+ *   - D      : dimensión de la matriz (número de filas y columnas).                                *
+ *                                                                                                  *
+ * Retorno:                                                                                         *
+ *   - Ninguno.                                                                                     *
+ ****************************************************************************************************/
+void impMatrix(double *matriz, int D) {
+    if (D < 9) {
+        for (int i = 0; i < D * D; i++) {
+            if (i % D == 0)
+                printf("\n");
+            printf(" %.2f ", matriz[i]);
+        }
+        printf("\n>-------------------->\n");
+    }
+}
+
+
+/****************************************************************************************************
+ * Firma:     void *multiMatrix(void *variables)                                                    *
+ *                                                                                                  *
+ * Propósito:                                                                                       *
+ *   Ejecutar el cálculo de un subconjunto de filas de la matriz resultado C = A x B. Cada hilo     *
+ *   recibe un bloque de filas (según su id) y realiza el producto fila–columna correspondiente.    *
+ *                                                                                                  *
+ * Parámetros:                                                                                      *
+ *   - variables : puntero genérico (void *) que se castea a struct parametros*, el cual contiene   *
+ *                 el id del hilo, el número total de hilos y la dimensión de las matrices.         *
+ *                                                                                                  *
+ * Retorno:                                                                                         *
+ *   - void* : valor genérico requerido por la interfaz de pthreads (no se usa).                    *
+ ****************************************************************************************************/
+void *multiMatrix(void *variables) {
+    struct parametros *data = (struct parametros *)variables;
+
+    int idH  = data->idH;
+    int nH   = data->nH;
+    int D    = data->N;
+    int filaI = (D / nH) * idH;
+    int filaF = (D / nH) * (idH + 1);
+
+    double Suma, *pA, *pB;
+
+    for (int i = filaI; i < filaF; i++) {
+        for (int j = 0; j < D; j++) {
+            pA = matrixA + i * D;
+            pB = matrixB + j;
+            Suma = 0.0;
+            for (int k = 0; k < D; k++, pA++, pB += D) {
+                Suma += *pA * *pB;
+            }
+            matrixC[i * D + j] = Suma;
+        }
+    }
+
+    pthread_mutex_lock(&MM_mutex);
+    pthread_mutex_unlock(&MM_mutex);
+    pthread_exit(NULL);
+}
 /************************************************************************************************************/
 /*  USO:                                                                                                    */
 /*      $ ./multiMatrix_pthread <Tamaño_Matriz> <Número_Hilos>                                              */
