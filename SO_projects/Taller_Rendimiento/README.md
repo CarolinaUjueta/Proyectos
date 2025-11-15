@@ -98,25 +98,27 @@ Algoritmo;TamMatriz;Hilos;Repeticion;Tiempo_microsegundos
 Lee el nombre del archivo
 Extrae:
 
-Algoritmo (ej. mmClasicaFork)
+-Algoritmo (ej. mmClasicaFork) 
+-Tamaño de la matriz 
+-Número de hilos 
 
-Tamaño de la matriz
-
-Número de hilos
 Ejemplo:
 mmClasicaFork-5-Hilos-8.dat → 5, 8.
 
 Abre el archivo .dat y busca líneas con:
 "Tiempo total de ejecución"
-
 Por cada coincidencia escribe una fila en el CSV.
 
 Cómo compilar:
+```
 gcc -Wall -Wextra -std=c11 parseResultados.c -o parseResultados
+```
 
 Cómo usar:
 
 Ejemplo para procesar todos los .dat:
 
+```
 ./parseResultados resultados.csv mmClasicaFork-*.dat
+```
 
