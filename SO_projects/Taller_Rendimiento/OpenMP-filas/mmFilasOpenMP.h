@@ -18,9 +18,6 @@
 #include <sys/time.h>
 #include <omp.h>
 
-/* Variables globales para medición */
-struct timeval inicio, fin;
-
 /* Prototipos de funciones */
 void InicioMuestra();
 void FinMuestra();
