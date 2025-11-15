@@ -98,9 +98,9 @@ Algoritmo;TamMatriz;Hilos;Repeticion;Tiempo_microsegundos
 Lee el nombre del archivo
 Extrae:
 
--Algoritmo (ej. mmClasicaFork) 
--Tamaño de la matriz 
--Número de hilos 
+-Algoritmo (ej. mmClasicaFork)  
+-Tamaño de la matriz  
+-Número de hilos  
 
 Ejemplo:
 mmClasicaFork-5-Hilos-8.dat → 5, 8.
