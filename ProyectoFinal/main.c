@@ -1,121 +1,112 @@
 /* -------------------------------------------------------------------------- */
 /*                           Funcion principal del agente                      */
 /* -------------------------------------------------------------------------- */
+#include "agente_reserva.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
 int main(int argc, char *argv[])
 {
-    if (argc < 3) {
-        fprintf(stderr, "Uso: %s <NombreAgente> <ArchivoSolicitudes>\n", argv[0]);
-        return 1;
+    char nombre[64] = "";
+    char archivo[128] = "";
+    char pipe_srv[128] = "";
+    char pipe_resp[128];
+
+    /* --------------------- PARSEO DE ARGUMENTOS --------------------- */
+    int opt;
+    while ((opt = getopt(argc, argv, "s:a:p:")) != -1) {
+        switch (opt) {
+        case 's': strcpy(nombre, optarg); break;
+        case 'a': strcpy(archivo, optarg); break;
+        case 'p': strcpy(pipe_srv, optarg); break;
+        default:
+            fprintf(stderr, "Uso: %s -s nombre -a archivo -p pipeSrv\n", argv[0]);
+            exit(1);
+        }
     }
 
-    char nombre_agente[MAX_LONG_NOMBRE_AGENTE];
-    char archivo_entrada[128];
-    char pipe_respuesta[MAX_LONG_NOMBRE_PIPE];
-
-    strncpy(nombre_agente, argv[1], MAX_LONG_NOMBRE_AGENTE);
-    strncpy(archivo_entrada, argv[2], sizeof(archivo_entrada));
-
-    snprintf(pipe_respuesta, sizeof(pipe_respuesta),
-             "pipe_respuesta_%s", nombre_agente);
-
-    /* Crear FIFO del agente */
-    if (mkfifo(pipe_respuesta, 0666) < 0) {
-        perror("Error creando pipe de respuesta");
-        return 1;
+    if (nombre[0] == '\0' || archivo[0] == '\0' || pipe_srv[0] == '\0') {
+        fprintf(stderr, "Faltan parámetros. Uso: %s -s nombre -a archivo -p pipeSrv\n", argv[0]);
+        exit(1);
     }
 
-    printf("[AGENTE %s] Pipe de respuesta creado: %s\n",
-           nombre_agente, pipe_respuesta);
+    /* ------------------ CREAR PIPE DE RESPUESTA ------------------ */
+    snprintf(pipe_resp, sizeof(pipe_resp), "/tmp/resp_%s", nombre);
+    mkfifo(pipe_resp, 0666);
 
-    /* Registrar agente */
-    if ( registrar_agente(nombre_agente, pipe_respuesta) < 0 ) {
+    /* ------------------ REGISTRO CON EL CONTROLADOR ------------------ */
+    if (registrar_agente(nombre, pipe_srv, pipe_resp) < 0) {
         fprintf(stderr, "No se pudo registrar el agente.\n");
-        unlink(pipe_respuesta);
-        return 1;
+        exit(1);
     }
 
-    printf("[AGENTE %s] Registro enviado al controlador.\n", nombre_agente);
-
-    /* ----------------------
-       Apertura del archivo
-       ---------------------- */
-    FILE *f = fopen(archivo_entrada, "r");
-    if (!f) {
-        perror("No se pudo abrir archivo de entrada");
-        unlink(pipe_respuesta);
-        return 1;
+    /* Leer hora enviada por el controlador */
+    int fd_resp = open(pipe_resp, O_RDONLY);
+    if (fd_resp < 0) {
+        perror("open pipe respuesta");
+        exit(1);
     }
 
-    char linea[MAX_LONG_LINEA];
-    solicitud_reserva_t sol;
-    respuesta_reserva_t resp;
+    char buffer[MAXLINE];
+    int hora_actual = 0;
 
-    /* Preparar campos constantes de la solicitud */
-    strcpy(sol.nombre_agente, nombre_agente);
-    strcpy(sol.pipe_respuesta, pipe_respuesta);
+    if (read(fd_resp, buffer, sizeof(buffer)) > 0) {
+        hora_actual = atoi(buffer);
+        printf("Agente %s registrado. Hora actual = %d\n", nombre, hora_actual);
+    }
+    close(fd_resp);
 
-    /* ----------------------
-       LECTURA LINEA A LINEA
-       ---------------------- */
-    while (fgets(linea, sizeof(linea), f)) {
+    /* ------------------ ABRIR ARCHIVO CSV ------------------ */
+    FILE *fp = fopen(archivo, "r");
+    if (!fp) {
+        perror("fopen archivo solicitudes");
+        unlink(pipe_resp);
+        exit(1);
+    }
 
-        /* Formato típico: Familia Hora Personas */
-        char familia[MAX_LONG_NOMBRE_FAMILIA];
-        int  hora, num;
+    /* ------------------ BUCLE PRINCIPAL ------------------ */
+    char linea[MAXLINE];
+    char familia[64];
+    int hora, personas;
 
-        if (sscanf(linea, "%s %d %d", familia, &hora, &num) != 3) {
-            continue;  /* línea incorrecta */
+    while (fgets(linea, sizeof(linea), fp)) {
+
+        if (sscanf(linea, "%[^,],%d,%d", familia, &hora, &personas) != 3) {
+            continue;
         }
 
-        strcpy(sol.nombre_familia, familia);
-        sol.hora_solicitada = hora;
-        sol.num_personas    = num;
+        if (hora < hora_actual) {
+            printf("Agente %s IGNORA solicitud (%s %d) porque hora < hora_sim (%d)\n",
+                   nombre, familia, hora, hora_actual);
+            continue;
+        }
 
-        /* Enviar solicitud y esperar respuesta */
-        if (enviar_solicitud_y_recibir(nombre_agente,
-                                       pipe_respuesta,
-                                       &sol,
-                                       &resp) < 0) {
-            fprintf(stderr, "[AGENTE %s] Error en comunicación.\n", nombre_agente);
+        enviar_solicitud(familia, personas, hora, pipe_srv, pipe_resp);
+
+        fd_resp = open(pipe_resp, O_RDONLY);
+        if (fd_resp < 0) {
+            perror("open pipe respuesta");
             break;
         }
 
-        /* ------------------------------------------
-           IMPRIMIR RESPUESTA DEL CONTROLADOR
-           ------------------------------------------ */
-        switch (resp.tipo) {
+        memset(buffer, 0, sizeof(buffer));
+        read(fd_resp, buffer, sizeof(buffer));
+        close(fd_resp);
 
-        case RESPUESTA_RESERVA_OK:
-            printf("[AGENTE %s] Aprobada: Familia %s Hora %d Personas %d\n",
-                   nombre_agente,
-                   resp.reserva.nombre_familia,
-                   resp.reserva.hora_inicio,
-                   resp.reserva.num_personas);
-            break;
-
-        case RESPUESTA_RESERVA_REPROGRAMADA:
-            printf("[AGENTE %s] Reprogramada: Familia %s NuevaHora %d\n",
-                   nombre_agente,
-                   resp.reserva.nombre_familia,
-                   resp.reserva.hora_inicio);
-            break;
-
-        case RESPUESTA_RESERVA_NEGADA_EXTEMP:
-        case RESPUESTA_RESERVA_NEGADA_SIN_CUPO:
-        case RESPUESTA_RESERVA_NEGADA_AFORO:
-            printf("[AGENTE %s] Negada para familia %s (%s)\n",
-                   nombre_agente,
-                   resp.reserva.nombre_familia,
-                   resp.mensaje);
-            break;
-        }
+        printf("Agente %s recibió respuesta: %s\n", nombre, buffer);
 
         sleep(2);
     }
 
-    fclose(f);
-    unlink(pipe_respuesta);
+    /* ------------------ TERMINAR ------------------ */
+    printf("Agente %s termina.\n", nombre);
 
-    printf("Agente %s termina.\n", nombre_agente);
+    fclose(fp);
+    unlink(pipe_resp);
+
     return 0;
 }
