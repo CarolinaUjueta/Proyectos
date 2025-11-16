@@ -7,10 +7,10 @@
  * Autor       : Carolina Ujueta                                                                     *
  * Fecha       : 27/10/2025                                                                          *
  *                                                                                                   *
- * Descripción : Archivo de cabecera para el módulo del Agente de Reserva.                          *
+ * Descripción : Archivo de cabecera para el módulo del Agente de Reserva.                           *
  *               Contiene la definición de constantes, prototipos de funciones y los includes        *
  *               necesarios para la comunicación entre agentes y el Controlador del Sistema de       *
- *               Reservas utilizando FIFOs (named pipes).                                             *
+ *               Reservas utilizando FIFOs (named pipes).                                            *
  *                                                                                                   *
  *****************************************************************************************************/
 
