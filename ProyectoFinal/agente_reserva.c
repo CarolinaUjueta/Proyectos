@@ -7,6 +7,7 @@
 * Descripción: Programa Agente que se conecta con el Controlador, se registra y luego envía solicitudes *
 *********************************************************************************************************/
 
+#include "agente_reserva.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,63 +15,50 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
-#include "controlador_reserva.h"
-
-#define MAX_LONG_LINEA 256
-
-#define FIFO_CONTROLADOR "pipecontrol"
-
-/* -------------------------------------------------------------------------- */
-/* Función que envía una SOLICITUD y espera la RESPUESTA del Controlador     */
-/* -------------------------------------------------------------------------- */
-static int enviar_solicitud_y_recibir(
-        const char *nombre_agente,
-        const char *pipe_respuesta,
-        solicitud_reserva_t *sol,
-        respuesta_reserva_t *resp)
+/* --------------------------------------------------------------
+   Enviar registro inicial al Controlador
+   --------------------------------------------------------------*/
+int registrar_agente(const char *nombre, const char *pipe_srv, const char *pipe_resp)
 {
-    int fd_ctrl, fd_resp;
-    char linea[MAX_LONG_LINEA];
+    int fd;
+    char msg[MAXLINE];
 
-    /* Abrimos FIFO del controlador */
-    fd_ctrl = open(FIFO_CONTROLADOR, O_WRONLY);
-    if (fd_ctrl < 0) {
-        perror("Error abriendo FIFO del controlador");
+    fd = open(pipe_srv, O_WRONLY);
+    if (fd < 0) {
+        perror("open pipe controlador");
         return -1;
     }
 
-    /* Serializamos la solicitud.
-       Formato definido por el grupo:
-       SOLICITUD;<agente>;<familia>;<hora>;<personas>;<pipeRes>
-    */
-    snprintf(linea, sizeof(linea),
-             "SOLICITUD;%s;%s;%d;%d;%s\n",
-             sol->nombre_agente,
-             sol->nombre_familia,
-             sol->hora_solicitada,
-             sol->num_personas,
-             sol->pipe_respuesta);
+    snprintf(msg, sizeof(msg), "REGISTRO;%s;%s\n", nombre, pipe_resp);
+    write(fd, msg, strlen(msg));
+    close(fd);
 
-    write(fd_ctrl, linea, strlen(linea));
-    close(fd_ctrl);
+    return 0;
+}
 
-    /* -----------------------------------------------------------
-       Ahora esperamos respuesta del Controlador por el pipe propio
-       ----------------------------------------------------------- */
-    fd_resp = open(pipe_respuesta, O_RDONLY);
-    if (fd_resp < 0) {
-        perror("Error abriendo pipe de respuesta");
+/* --------------------------------------------------------------
+   Enviar solicitud normal
+   --------------------------------------------------------------*/
+int enviar_solicitud(const char *familia, int personas, int hora_inicio,
+                     const char *pipe_srv, const char *pipe_resp)
+{
+    int fd;
+    char msg[MAXLINE];
+
+    fd = open(pipe_srv, O_WRONLY);
+    if (fd < 0) {
+        perror("open pipe controlador");
         return -1;
     }
 
-    /* La respuesta llega como una estructura binaria */
-    ssize_t n = read(fd_resp, resp, sizeof(*resp));
-    close(fd_resp);
+    int hora_fin = hora_inicio + 2;
 
-    if (n != sizeof(*resp)) {
-        fprintf(stderr, "Error: respuesta inválida.\n");
-        return -1;
-    }
+    snprintf(msg, sizeof(msg),
+             "SOLICITUD;%s;%d;%d;%d;%s\n",
+             familia, personas, hora_inicio, hora_fin, pipe_resp);
+
+    write(fd, msg, strlen(msg));
+    close(fd);
 
     return 0;
 }
